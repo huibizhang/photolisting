@@ -11,6 +11,8 @@ const { app, BrowserWindow, screen } = require("electron");
 const path = require("path");
 const { default: axios } = require("axios");
 
+let readinPath = "";
+
 function createWindow() {
   // 創建瀏覽器窗口
   const mainWindow = new BrowserWindow({
@@ -79,9 +81,9 @@ function createWindow() {
     try {
       // const d = "C:\\Users\\narut\\Desktop\\test";
 
-      console.log(appPath);
+      // console.log(appPath);
 
-      const d = appPath;
+      const d = readinPath ? readinPath : appPath;
       const fileList = fs.readdirSync(d);
       const files = [];
 
@@ -186,9 +188,20 @@ function createWindow() {
   // mainWindow.webContents.openDevTools();
 }
 
+app.on("ready", function () {
+  if (process.argv.length > 1) {
+    const temp = process.argv[1];
+
+    if (fs.existsSync(temp) && fs.lstatSync(temp).isDirectory()) {
+      readinPath = temp;
+    }
+  }
+});
+
 // 這段程序將會在 Electron 結束初始化
 // 和創建瀏覽器窗口的時候調用
 // 部分 API 在 ready 事件觸發後才能使用。
+
 app.whenReady().then(() => {
   createWindow();
 
