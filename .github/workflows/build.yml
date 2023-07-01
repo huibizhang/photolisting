@@ -30,7 +30,7 @@ jobs:
       - name: Electron Builder Action
         uses: samuelmeuli/action-electron-builder@v1.6.0
         with:
-          build_script_name: full-build
+          build_script_name: github_full-build
           args: "-p always"
           github_token: ${{ secrets.MY_GITHUB_TOKEN }}
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
