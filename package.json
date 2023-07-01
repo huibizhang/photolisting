@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=dev vite",
     "build": "cross-env NODE_ENV=production vite build",
-    "github:build": "cross-env NODE_ENV=github vite build",
+    "github:build": "cross-env NODE_ENV=github vite build --mode github",
     "serve": "vite preview",
     "electron:serve": "cross-env NODE_ENV=dev electron .",
     "pack": "electron-builder --dir",
