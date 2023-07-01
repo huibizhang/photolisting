@@ -189,7 +189,7 @@
 
 <script>
 import exifr from "exifr/dist/full.esm";
-import Default from "./components/default.vue";
+import Default from "./components/Default.vue";
 import PhotoClass from "./components/PhotoClass.vue";
 
 export default {
