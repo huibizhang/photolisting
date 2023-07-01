@@ -8,6 +8,11 @@ const getConfig = () => {
         base: path.resolve(__dirname, "./dist/"),
         plugins: [vue()],
       }
+    : process.env.NODE_ENV === "github"
+    ? {
+        base: "./dist/",
+        plugins: [vue()],
+      }
     : {
         plugins: [vue()],
       };
