@@ -30,7 +30,7 @@ function createWindow() {
       nodeIntegration: true,
     },
 
-    // titleBarStyle: "hidden",
+    titleBarStyle: "hidden",
     titleBarOverlay: {
       color: "rgba(28,25,23,1)",
       // color: "transparent",
