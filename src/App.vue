@@ -6,7 +6,7 @@
       class="absolute flex h-8 w-full items-center px-2 text-xs text-white"
       :style="{ '-webkit-app-region': 'drag' }"
     >
-      <img src="icon.png" class="mr-1.5 h-5 w-5" />
+      <img src="/icon.ico" class="mr-1.5 h-5 w-5" />
 
       Photolisting
     </div>
