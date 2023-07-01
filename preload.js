@@ -23,6 +23,14 @@ contextBridge.exposeInMainWorld("electronAPI", {
       error,
     ];
   },
+  checkUpdate: (f) => {
+    ipcRenderer.on("getUpdateInfo", f);
+    ipcRenderer.send("checkUpdate");
+  },
+  updating: (url, f) => {
+    ipcRenderer.on("updatingProgress", f);
+    ipcRenderer.send("updating", url);
+  },
 });
 
 // 所有Node.js API都可以在預加載過程中使用。

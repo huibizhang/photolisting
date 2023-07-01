@@ -11,7 +11,7 @@
       Photolisting
     </div>
 
-    <Default v-if="!files.length" @selectDir="selectDir" />
+    <Home v-if="!files.length" @selectDir="selectDir" />
     <div
       class="flex h-screen max-h-screen w-screen flex-col overflow-hidden pt-8"
       v-if="files.length"
@@ -32,97 +32,6 @@
       <div
         class="h-full w-full flex-1 space-y-2 overflow-hidden overflow-y-auto"
       >
-        <!-- <div v-for="r in 5 - lowestRating + 1" class="" :key="`classfy-${r}`">
-          <div class="flex items-center justify-between bg-stone-800 p-2 px-4">
-            <div
-              class="flex-1 text-xl text-gray-300"
-              @dblclick="dictNameEditor[4 - r + 2] = true"
-              @keypress.enter="dictNameEditor[4 - r + 2] = false"
-            >
-              <span v-if="!dictNameEditor[4 - r + 2]">{{
-                nameDict[4 - r + 2]
-              }}</span>
-              <input
-                v-if="dictNameEditor[4 - r + 2]"
-                type="text"
-                v-model="nameDict[4 - r + 2]"
-                class="border-b border-blue-500 bg-transparent outline-none"
-              />
-            </div>
-            <div class="flex-1 text-right text-xs text-gray-500">
-              {{
-                getCheckedFilesByRating(4 - r + 2).length > 0
-                  ? `${getCheckedFilesByRating(4 - r + 2).length}/`
-                  : ""
-              }}{{ getFilesByRating(4 - r + 2).length }}
-              個項目
-            </div>
-          </div>
-          <div
-            class="grid min-h-0 w-screen grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6"
-          >
-            <label
-              class="flex aspect-[3/4] w-full border border-stone-900 bg-stone-800 transition-all"
-              v-for="f in getFilesByRating(4 - r + 2)"
-              :key="f.url"
-              @contextmenu.prevent="contextMenu($event, f.index)"
-            >
-              <input
-                type="checkbox"
-                name="img"
-                id=""
-                v-model="files[f.index].checked"
-                class="peer appearance-none"
-              />
-              <div
-                class="flex h-full w-full flex-col transition-all peer-checked:bg-stone-700"
-              >
-                <div
-                  class="flex min-h-0 flex-1 items-center justify-center p-3"
-                >
-                  <div
-                    class="relative flex"
-                    :class="f.width > f.height ? 'w-full' : 'h-full'"
-                    :style="{ 'aspect-ratio': `${f.width}/${f.height}` }"
-                  >
-                    <img
-                      :src="f.url"
-                      alt=""
-                      class="h-full w-full object-contain"
-                      @load="imgOnLoad($event, f.index)"
-                    />
-                    <div
-                      class="pointer-events-none absolute h-full w-full border-2 transition-all"
-                      :class="[
-                        files[f.index].checked ? 'opacity-100' : 'opacity-0',
-                      ]"
-                    >
-                      <div class="h-full w-full border"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex justify-center p-2 text-stone-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    class="h-3 w-3"
-                    v-for="i in 5"
-                    :class="[i <= f.rating && 'text-stone-300']"
-                    :key="`star${i + 1}-${f.index}`"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </label>
-          </div>
-        </div> -->
-
         <PhotoClass
           v-for="r in 5 - lowestRating + 1"
           :key="`classfy-${r}`"
@@ -184,13 +93,21 @@
         {{ mc.text }}
       </div>
     </div>
+    <UpdateForm
+      v-bind="updateInfo"
+      :formOpen="updateForm"
+      @cancel="updateForm = false"
+    />
   </div>
 </template>
 
 <script>
 import exifr from "exifr/dist/full.esm";
-import Default from "./components/Default.vue";
+import Home from "./components/Home.vue";
 import PhotoClass from "./components/PhotoClass.vue";
+import UpdateForm from "./components/UpdateForm.vue";
+
+// https://github.com/huibizhang/photolisting/releases/download/v0.0.0/photolisting-Setup-0.0.0.exe
 
 export default {
   data() {
@@ -235,9 +152,13 @@ export default {
       lowestRating: 2,
       unusedListOpened: false,
       savePath: undefined,
+      updateInfo: {},
+      updateForm: false,
     };
   },
   mounted() {
+    this.checkUpdate();
+
     const contextMenu = this.$refs.contextMenu;
     this.menuSize.width = contextMenu?.offsetWidth;
     this.menuSize.height = contextMenu?.offsetHeight;
@@ -376,6 +297,13 @@ export default {
       console.log(finalList);
       window.ipcRenderer.send("save", finalList);
     },
+    checkUpdate() {
+      window.electronAPI.checkUpdate((evt, arg) => {
+        this.updateInfo = arg;
+        this.updateForm = arg.currentVersion < arg.targetVersion;
+        console.log(this.updateForm);
+      });
+    },
   },
   watch: {
     menuOpened(value) {
@@ -392,6 +320,6 @@ export default {
       }
     },
   },
-  components: { Default, PhotoClass },
+  components: { Home, PhotoClass, UpdateForm },
 };
 </script>
