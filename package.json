@@ -36,7 +36,7 @@
       "buildResources": "public"
     },
     "files": [
-      "dist/",
+      "dist/**/*",
       "assets/",
       "main.js",
       "preload.js"
