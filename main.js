@@ -144,10 +144,8 @@ function createWindow() {
   ipcMain.on("updating", (evt, url) => {
     if (downloadItem) if (downloadItem.getState() === "progressing") return;
 
-    // 触发下载
     mainWindow.webContents.downloadURL(url);
 
-    // 监听 will-download
     session.defaultSession.on("will-download", (event, item, webContents) => {
       downloadItem = item;
 
