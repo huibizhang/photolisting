@@ -48,6 +48,12 @@
     },
     "linux": {
       "icon": "assets/icon.png"
+    },
+    "publish": {
+      "provider": "github",
+      "repo": "photolisting",
+      "owner": "huibizhang",
+      "releaseType": "release"
     }
   }
 }
