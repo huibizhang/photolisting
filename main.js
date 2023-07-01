@@ -185,7 +185,7 @@ function createWindow() {
   }
 
   // 打開開發工具
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 }
 
 // 這段程序將會在 Electron 結束初始化
