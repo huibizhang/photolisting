@@ -4,10 +4,12 @@ const { ipcMain, dialog, session } = require("electron");
 const fs = require("fs");
 const { LocalFileData } = require("get-file-object-from-local-path");
 const { fileBlob } = require("electron");
+const exec = require("child_process").exec;
 
 // 控制應用生命周期和創建原生瀏覽器窗口的模組
 const { app, BrowserWindow, screen } = require("electron");
 const path = require("path");
+const { default: axios } = require("axios");
 
 function createWindow() {
   // 創建瀏覽器窗口
@@ -28,7 +30,7 @@ function createWindow() {
       nodeIntegration: true,
     },
 
-    titleBarStyle: "hidden",
+    // titleBarStyle: "hidden",
     titleBarOverlay: {
       color: "rgba(28,25,23,1)",
       // color: "transparent",
@@ -53,30 +55,6 @@ function createWindow() {
     Math.round((height - wHieght) / 2),
     true
   );
-
-  // mainWindow.on("moved", () => {
-  //   data.position.x = mainWindow.getPosition()[0];
-  //   data.position.y = mainWindow.getPosition()[1];
-
-  //   if (data.position.x + mainWindow.getSize()[0] > width) {
-  //     data.position.x = width - mainWindow.getSize()[0] - 5;
-  //   }
-
-  //   if (data.position.y < 0) {
-  //     data.position.y = 5;
-  //   }
-
-  //   mainWindow.setPosition(data.position.x, data.position.y, true);
-
-  //   fs.writeFileSync(initPath, JSON.stringify(data));
-  // });
-
-  // Require the module
-  // var electronVibrancy = require('electron-vibrancy');
-  // electronVibrancy.SetVibrancy(true,browserWindowInstance.getNativeWindowHandle());
-
-  // mainWindow.setAlwaysOnTop(true)
-  // mainWindow.setSkipTaskbar(true)
 
   let appPath = app.getAppPath();
 
@@ -142,6 +120,60 @@ function createWindow() {
     });
 
     if ((renamedCount.length = files.length)) mainWindow.close();
+  });
+
+  ipcMain.on("checkUpdate", (evt, arg) => {
+    axios
+      .get(
+        "https://api.github.com/repos/huibizhang/photolisting/releases/latest"
+      )
+      .then((r) => {
+        evt.reply("getUpdateInfo", {
+          currentVersion: app.getVersion(),
+          targetVersion: r.data.name,
+          publishedAt: r.data.published_at,
+          url: r.data.assets.find(
+            (asset) => asset.name.split(".").pop() === "exe"
+          ).browser_download_url,
+        });
+      });
+  });
+
+  let downloadItem = null;
+
+  ipcMain.on("updating", (evt, url) => {
+    if (downloadItem) if (downloadItem.getState() === "progressing") return;
+
+    // 触发下载
+    mainWindow.webContents.downloadURL(url);
+
+    // 监听 will-download
+    session.defaultSession.on("will-download", (event, item, webContents) => {
+      downloadItem = item;
+
+      try {
+        fs.rmSync(appPath + "/update.exe");
+      } catch (error) {
+        console.error(error);
+      }
+
+      item.setSavePath(appPath + "/update.exe");
+      item.on("updated", (event, state) => {
+        console.log(
+          "Downloading",
+          item.getReceivedBytes() / item.getTotalBytes()
+        );
+        evt.reply("updatingProgress", {
+          size: Number(item.getTotalBytes() / 1024 / 1024),
+          progress: item.getReceivedBytes() / item.getTotalBytes(),
+          done: false,
+        });
+      });
+      item.on("done", (event, state) => {
+        console.log(state);
+        const workerProcess = exec("update.exe", { cwd: appPath });
+      });
+    });
   });
 
   if (process.env.NODE_ENV === "dev") {
