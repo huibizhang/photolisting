@@ -16,7 +16,7 @@ function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 350,
     height: 390,
-    icon: path.join(__dirname, "/public/icon.png"),
+    icon: path.join(__dirname, "/public/icon.ico"),
     // frame: false,
     skipTaskbar: false,
     transparent: false,
