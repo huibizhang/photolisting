@@ -64,6 +64,7 @@
           @unusedListOpenClicked="unusedListOpened = !unusedListOpened"
           @load="imgOnLoad($event.$event, $event.index)"
           @checked="files[$event.index].checked = $event.value"
+          @contextmenuClicked="contextMenu($event.$event, $event.index)"
         />
       </div>
 
