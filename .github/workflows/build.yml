@@ -21,9 +21,6 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-#       - run: npm install
-#       - name: GUI building
-#         run: npm run build
       - name: auto taging
         uses: Klemensas/action-autotag@stable
         with:
