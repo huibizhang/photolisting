@@ -46,13 +46,13 @@
     "asar": false,
     "win": {
       "target": "NSIS",
-      "icon": "public/icon.png"
+      "icon": "public/icon.ico"
     },
     "mac": {
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.ico"
     },
     "linux": {
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.ico"
     },
     "publish": {
       "provider": "github",
