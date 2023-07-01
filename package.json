@@ -29,7 +29,8 @@
     "appId": "com.huibizhang.photolisting",
     "productName": "photolisting",
     "directories": {
-      "output": "pack"
+      "output": "pack",
+      "buildResources": "public"
     },
     "files": [
       "dist/",
