@@ -67,7 +67,7 @@ function createWindow() {
         properties: ["openDirectory"],
       });
       if (!paths.canceled) {
-        appPath = paths.filePaths[0];
+        readinPath = paths.filePaths[0];
       }
 
       event.returnValue = !paths.canceled;
