@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=dev vite",
     "build": "cross-env NODE_ENV=production vite build",
+    "github:build": "cross-env NODE_ENV=github vite build",
     "serve": "vite preview",
     "electron:serve": "cross-env NODE_ENV=dev electron .",
     "pack": "electron-builder --dir",
     "pack-dist": "electron-builder",
-    "full-build": "npm-run-all -s build pack-dist"
+    "full-build": "npm-run-all -s build pack-dist",
+    "github-full-build": "npm-run-all -s github:build pack-dist"
   },
   "dependencies": {
     "axios": "^1.4.0",
