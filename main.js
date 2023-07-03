@@ -1,14 +1,17 @@
 // main.js
 
-const { ipcMain, dialog, session } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  screen,
+  ipcMain,
+  dialog,
+  session,
+} = require("electron");
 const fs = require("fs");
-const { LocalFileData } = require("get-file-object-from-local-path");
-const { fileBlob } = require("electron");
-const exec = require("child_process").exec;
-
-// 控制應用生命周期和創建原生瀏覽器窗口的模組
-const { app, BrowserWindow, screen } = require("electron");
 const path = require("path");
+const { LocalFileData } = require("get-file-object-from-local-path");
+const exec = require("child_process").exec;
 const { default: axios } = require("axios");
 
 let readinPath = "";
@@ -38,11 +41,6 @@ function createWindow() {
       // color: "transparent",
       symbolColor: "white",
     },
-    // titleBarStyle: "hidden",
-    // titleBarOverlay: {
-    //   color: 'rgba(0,0,0,0)',
-    //   symbolColor: 'white'
-    // }
   });
 
   const primaryDisplay = screen.getPrimaryDisplay();
@@ -89,21 +87,12 @@ function createWindow() {
 
       // console.log(fileList);
 
-      for (filePath of fileList) {
-        // console.log(filePath.split(".").pop());
-        // console.log(filePath);
-        if (filePath.split(".").pop() === "jpg") {
-          // const blob = fileBlob.fileToBlob(filePath);
-          // files.push(blob);
+      for (filePath of fileList)
+        if (filePath.split(".").pop() === "jpg")
           files.push(new LocalFileData(d + "\\" + filePath));
-          // console.log(filePath, "pushed!");
-        }
-      }
-      if (files.length > 0) {
-        return [files, d];
-      } else {
-        return [null, undefined, "no photo"];
-      }
+
+      if (files.length > 0) return [files, d];
+      else return [null, undefined, "no photo"];
     } catch (e) {
       console.log(e);
       return [null, e];
@@ -113,15 +102,17 @@ function createWindow() {
   ipcMain.on("save", (evt, files) => {
     const dir = appPath;
 
-    const renamedCount = [];
-
-    files.forEach((f) => {
-      fs.rename(`${dir}\\${f.oldName}`, `${dir}\\${f.newName}`, () => {
-        renamedCount.push(true);
+    const renamePromises = files.map((f) => {
+      return new Promise((resolve) => {
+        fs.rename(`${dir}/${f.oldName}`, `${dir}/${f.newName}`, () => {
+          resolve();
+        });
       });
     });
 
-    if ((renamedCount.length = files.length)) mainWindow.close();
+    Promise.all(renamePromises).then(() => {
+      mainWindow.close();
+    });
   });
 
   ipcMain.on("checkUpdate", (evt, arg) => {
@@ -138,6 +129,9 @@ function createWindow() {
             (asset) => asset.name.split(".").pop() === "exe"
           ).browser_download_url,
         });
+      })
+      .catch((e) => {
+        evt.reply("getUpdateInfo", null);
       });
   });
 
