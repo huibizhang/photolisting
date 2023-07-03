@@ -36,11 +36,9 @@ jobs:
       #     echo "currentVersion=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
       # - name: Show Current Version
       #   run: echo "currentVersion = ${{ steps.get_current_version.outputs.currentVersion }}"
-      - uses: MontyD/package-json-updated-action
+      - uses: johnnybenson/package-json-versioned-action@v1.0.8
         id: version_updated
         with:
-          path: package.json
-        env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
       - name: Show Previous Version
         run: echo "previousVersion = ${{ steps.version_updated.outputs.previous-version }}"
