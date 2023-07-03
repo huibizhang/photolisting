@@ -21,6 +21,8 @@ jobs:
       #   id: package-json
       #   with:
       #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      - name: checkout
+        uses: actions/checkout@v2
       - name: Get Previous Version
         id: get_previous_version
         run: |
