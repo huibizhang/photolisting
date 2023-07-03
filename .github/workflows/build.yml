@@ -14,28 +14,38 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged && github.head_ref == 'dev' }}
     outputs:
-      previousVersion: ${{ steps.get_previous_version.outputs.previousVersion }}
-      currentVersion: ${{ steps.get_current_version.outputs.currentVersion }}
+      previousVersion: ${{ steps.version_updated.outputs.previous-version }}
+      currentVersion: ${{ steps.version_updated.outputs.version }}
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: Get ORIG_HEAD SHA
-        id: get_orig_head_sha
-        run: |
-          echo "SHA = $(git log ORIG_HEAD -1 --pretty=%H)"
-          echo "SHA=$(git log ORIG_HEAD -1 --pretty=%H)" >> $GITHUB_OUTPUT
-      - name: Get Previous Version
-        id: get_previous_version
-        run: |
-          echo "previousVersion=$(git show ${{ steps.get_orig_head_sha.outputs.SHA }}:package.json | grep -oP '(?<="version": ")[^"]+')" >> $GITHUB_OUTPUT
+      # - name: Get ORIG_HEAD SHA
+      #   id: get_orig_head_sha
+      #   run: |
+      #     echo "SHA = $(git log ORIG_HEAD -1 --pretty=%H)"
+      #     echo "SHA=$(git log ORIG_HEAD -1 --pretty=%H)" >> $GITHUB_OUTPUT
+      # - name: Get Previous Version
+      #   id: get_previous_version
+      #   run: |
+      #     echo "previousVersion=$(git show ${{ steps.get_orig_head_sha.outputs.SHA }}:package.json | grep -oP '(?<="version": ")[^"]+')" >> $GITHUB_OUTPUT
+      # - name: Show Previous Version
+      #   run: echo "previousVersion = ${{ steps.get_previous_version.outputs.previousVersion }}"
+      # - name: Get Current Version
+      #   id: get_current_version
+      #   run: |
+      #     echo "currentVersion=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+      # - name: Show Current Version
+      #   run: echo "currentVersion = ${{ steps.get_current_version.outputs.currentVersion }}"
+      - uses: MontyD/package-json-updated-action
+        id: version_updated
+        with:
+          path: package.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
       - name: Show Previous Version
-        run: echo "previousVersion = ${{ steps.get_previous_version.outputs.previousVersion }}"
-      - name: Get Current Version
-        id: get_current_version
-        run: |
-          echo "currentVersion=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+        run: echo "previousVersion = ${{ steps.version_updated.outputs.previous-version }}"
       - name: Show Current Version
-        run: echo "currentVersion = ${{ steps.get_current_version.outputs.currentVersion }}"
+        run: echo "currentVersion = ${{ steps.version_updated.outputs.version }}"
 
   build:
     name: "Build & Publish"
