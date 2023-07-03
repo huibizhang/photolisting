@@ -1,15 +1,10 @@
-<center>
-
-# Photolisting
-
-![](./icon_128.png)
-
-</center>
+<p align="center">
+  <img width="128" src="./icon_128.png" alt="vitawind logo">
+  <h1 align="center">Photolisting</h1>
+</p>
 
 ---
 
-<center>
-
-Develop with `Electron` + `Vite` + `TailwindCSS`
-
-</center>
+<p align="center">
+Develop with <code>Electron</code> + <code>Vite</code> + <code>TailwindCSS</code>
+</p>
