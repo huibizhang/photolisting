@@ -1,10 +1,10 @@
 <template>
   <div
-    class="relative flex h-screen w-full select-none flex-col overflow-hidden bg-stone-900"
+    class="relative flex h-screen min-h-0 w-full select-none flex-col overflow-hidden bg-stone-900"
   >
     <!-- 視窗標題列 -->
     <div
-      class="absolute flex h-8 w-full items-center px-2 text-xs text-white"
+      class="absolute flex h-7 w-full items-center px-2 text-xs text-white"
       :style="{ '-webkit-app-region': 'drag' }"
     >
       <img src="/icon.ico" class="mr-1.5 h-5 w-5" />
@@ -103,6 +103,21 @@
       :formOpen="updateForm"
       @cancel="updateForm = false"
     />
+
+    <div
+      class="absolute bottom-3 left-3 flex justify-center rounded-full border border-stone-500 px-4 py-1 text-white transition-all hover:bg-white/10 active:scale-95 active:bg-white/30 active:text-blue-400"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="h-5 w-5 transition-all"
+      >
+        <path
+          d="M18.75 12.75h1.5a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5zM12 6a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 0112 6zM12 18a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 0112 18zM3.75 6.75h1.5a.75.75 0 100-1.5h-1.5a.75.75 0 000 1.5zM5.25 18.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 010 1.5zM3 12a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 013 12zM9 3.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5zM12.75 12a2.25 2.25 0 114.5 0 2.25 2.25 0 01-4.5 0zM9 15.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z"
+        />
+      </svg>
+    </div>
   </div>
 </template>
 
