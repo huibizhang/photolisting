@@ -2,6 +2,7 @@
   <div
     class="relative flex h-screen w-full select-none flex-col overflow-hidden bg-stone-900"
   >
+    <!-- 視窗標題列 -->
     <div
       class="absolute flex h-8 w-full items-center px-2 text-xs text-white"
       :style="{ '-webkit-app-region': 'drag' }"
@@ -11,7 +12,10 @@
       Photolisting
     </div>
 
+    <!-- 選擇相片庫 主畫面 -->
     <Home v-if="!files.length" @selectDir="selectDir" />
+
+    <!-- 相片列表 -->
     <div
       class="flex h-screen max-h-screen w-screen flex-col overflow-hidden pt-8"
       v-if="files.length"
@@ -43,7 +47,7 @@
           }${getFilesByRating(4 - r + 2).length}`"
           :files="getFilesByRating(4 - r + 2)"
           @load="imgOnLoad($event.$event, $event.index)"
-          @checked="files[$event.index].checked = $event.value"
+          @checked="fileChecked($event)"
           @contextmenuClicked="contextMenu($event.$event, $event.index)"
           @rename="nameDict[4 - r + 2] = $event"
         />
@@ -63,7 +67,7 @@
           :unusedListOpened="unusedListOpened"
           @unusedListOpenClicked="unusedListOpened = !unusedListOpened"
           @load="imgOnLoad($event.$event, $event.index)"
-          @checked="files[$event.index].checked = $event.value"
+          @checked="fileChecked($event)"
           @contextmenuClicked="contextMenu($event.$event, $event.index)"
         />
       </div>
@@ -216,6 +220,9 @@ export default {
             this.lowestRating && f.checked
       );
     },
+    getCheckedFiles() {
+      return this.files.filter((f) => f.checked);
+    },
     contextMenu(e, i) {
       // if (this.getCheckedFilesByRating(rating).length <= 1) {
       //   this.getCheckedFilesByRating(rating).forEach((f) => {
@@ -224,7 +231,11 @@ export default {
       // }
 
       this.menuOpened = true;
-      this.currentPic = i;
+      // this.currentPic = i;
+
+      if (!this.files[i].checked) {
+        this.fileChecked({ index: i, value: true });
+      }
 
       console.log(this.menuSize.width, e.clientX, window.innerWidth);
 
@@ -261,14 +272,12 @@ export default {
       }
     },
     changeRating(nextRating) {
-      const index = this.currentPic;
+      // const index = this.currentPic;
+      // this.files[index].rating = nextRating;
 
-      // const f = { ...this.files[index] };
-      // f.rating = nextRating;
-      // this.files.splice(index, 1, f);
-
-      this.files[index].rating = nextRating;
-      // this.operationTime = new Date();
+      this.getCheckedFiles().forEach(
+        (f) => (this.files[f.index].rating = nextRating)
+      );
     },
     async createFile(file, index) {
       // console.log(file);
@@ -304,6 +313,31 @@ export default {
         this.updateForm = arg.currentVersion < arg.targetVersion;
         console.log(this.updateForm);
       });
+    },
+    fileChecked(event) {
+      const { index, value, modifier } = event;
+
+      if (modifier === "ctrl") {
+        this.files[index].checked = value;
+      } else {
+        let first = -1;
+        const selected = this.getCheckedFiles().length;
+
+        this.files.forEach((file) => {
+          if (first === -1 && file.checked) {
+            first = file.index;
+          }
+
+          if (modifier === "shift") {
+            this.files[file.index].checked =
+              first !== -1 && first <= file.index && file.index <= index;
+          } else {
+            this.files[file.index].checked =
+              (file.index === index && value) ||
+              (file.index === index && selected > 1);
+          }
+        });
+      }
     },
   },
   watch: {
