@@ -65,7 +65,7 @@ jobs:
     name: "Cancel"
     runs-on: ubuntu-latest
     needs: version-checking
-    if: ${{ steps.version-checking.outputs.previousVersion >= steps.version-checking.outputs.currentVersion }}
+    if: ${{ needs.version-checking.outputs.previousVersion >= needs.version-checking.outputs.currentVersion }}
     steps:
       - uses: vishnudxb/cancel-workflow@v1.2
         with:
