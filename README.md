@@ -1,29 +1,15 @@
-# photolisting
+<center>
 
-- **template of:** vite + vue
-- **tailwindcss:** v3.x
+# Photolisting
 
-## Started
-```bash
-yarn
-# or `npm install`
-```
+![](./icon_128.png)
+
+</center>
 
 ---
-## Develop
-```bash
-yarn dev
-# or `npm run dev`
-```
 
----
-## Build
-```bash
-yarn build
-# or `npm run build`
-```
+<center>
 
----
-<p align="center">
-<img src="./powered-by-vitawind-bright.png">
-</p>
+Develop with `Electron` + `Vite` + `TailwindCSS`
+
+</center>
