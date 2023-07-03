@@ -100,17 +100,19 @@ function createWindow() {
   });
 
   ipcMain.on("save", (evt, files) => {
-    const dir = appPath;
+    const dir = readinPath;
 
-    const renamedCount = [];
-
-    files.forEach((f) => {
-      fs.rename(`${dir}\\${f.oldName}`, `${dir}\\${f.newName}`, () => {
-        renamedCount.push(true);
+    const renamePromises = files.map((f) => {
+      return new Promise((resolve) => {
+        fs.rename(`${dir}/${f.oldName}`, `${dir}/${f.newName}`, () => {
+          resolve();
+        });
       });
     });
 
-    if ((renamedCount.length = files.length)) mainWindow.close();
+    Promise.all(renamePromises).then(() => {
+      mainWindow.close();
+    });
   });
 
   ipcMain.on("checkUpdate", (evt, arg) => {
