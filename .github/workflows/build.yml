@@ -19,14 +19,15 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: Show HEAD~1 SHA
+      - name: Get ORIG_HEAD SHA
+        id: get_orig_head_sha
         run: |
-          echo "SHA= $(git reflog HEAD@{0})"
-          echo "SHA= $(git rev-list --max-count=1 origin/master)"
+          echo "SHA = $(git log ORIG_HEAD -1 --pretty=%H)"
+          echo "SHA=$(git log ORIG_HEAD -1 --pretty=%H)" >> $GITHUB_OUTPUT
       - name: Get Previous Version
         id: get_previous_version
         run: |
-          echo "previousVersion=$(git show origin/master~1:package.json | grep -oP '(?<="version": ")[^"]+')" >> $GITHUB_OUTPUT
+          echo "previousVersion=$(git show ${{ steps.get_orig_head_sha.outputs.SHA }}:package.json | grep -oP '(?<="version": ")[^"]+')" >> $GITHUB_OUTPUT
       - name: Show Previous Version
         run: echo "previousVersion = ${{ steps.get_previous_version.outputs.previousVersion }}"
       - name: Get Current Version
