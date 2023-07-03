@@ -26,13 +26,13 @@ jobs:
         id: get_previous_version
         run: |
           PREVIOUS_VERSION=$(git show HEAD~1:package.json | grep -oP '(?<="version": ")[^"]+')
-          echo "previousVersion=::$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
+          echo "::previousVersion=::$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
           echo "${{ PREVIOUS_VERSION }}"
       - name: Get Current Version
         id: get_current_version
         run: |
           CURRENT_VERSION=$(jq -r '.version' package.json)
-          echo "currentVersion=::$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "::currentVersion=::$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "${{ CURRENT_VERSION }}"
 
   build:
