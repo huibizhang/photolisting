@@ -13,9 +13,9 @@ jobs:
     name: "Version Checking"
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged && github.head_ref == 'dev' }}
-    # outputs:
-    #   output1: ${{ steps.package-json.outputs.previous-version }}
-    #   output2: ${{ steps.package-json.outputs.version }}
+    outputs:
+      previousVersion: ${{ steps.get_previous_version.outputs.previousVersion }}
+      currentVersion: ${{ steps.get_current_version.outputs.currentVersion }}
     steps:
       # - uses: johnnybenson/package-json-versioned-action@v1.0.5
       #   id: package-json
@@ -25,16 +25,20 @@ jobs:
         id: get_previous_version
         run: |
           echo "previousVersion=$(git show HEAD~1:package.json | grep -oP '(?<="version": ")[^"]+')" >> $GITHUB_OUTPUT
+      - name: Show Previous Version
+        run: echo "previousVersion = ${{ steps.get_previous_version.outputs.previousVersion }}"
       - name: Get Current Version
         id: get_current_version
         run: |
           echo "currentVersion=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+      - name: Show Current Version
+        run: echo "currentVersion = ${{ steps.get_current_version.outputs.currentVersion }}"
 
   build:
     name: "Build & Publish"
     runs-on: windows-latest
     needs: version-checking
-    if: ${{ steps.version-checking.outputs.previousVersion < steps.version-checking.outputs.currentVersion }}
+    if: ${{ needs.version-checking.outputs.previousVersion < needs.version-checking.outputs.currentVersion }}
     steps:
       - name: checkout
         uses: actions/checkout@v2
