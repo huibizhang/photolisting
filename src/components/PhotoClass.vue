@@ -44,7 +44,7 @@
     </div>
     <div
       v-if="(unusedListOpened && spanable) || !spanable"
-      class="grid min-h-0 w-screen grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6"
+      class="grid min-h-0 w-screen grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8"
     >
       <label
         class="flex aspect-[3/4] w-full border border-stone-900 bg-stone-800 transition-all"
@@ -59,13 +59,26 @@
           name="img"
           id=""
           :checked="f.checked"
-          @change="
-            $emit('checked', { index: f.index, value: $event.target.checked })
+          @click.exact="$emit('checked', { index: f.index, value: !f.checked })"
+          @click.shift="
+            $emit('checked', {
+              index: f.index,
+              value: !f.checked,
+              modifier: 'shift',
+            })
+          "
+          @click.ctrl="
+            $emit('checked', {
+              index: f.index,
+              value: !f.checked,
+              modifier: 'ctrl',
+            })
           "
           class="peer appearance-none"
         />
         <div
-          class="flex h-full w-full flex-col transition-all peer-checked:bg-stone-700"
+          class="flex h-full w-full flex-col transition-all"
+          :class="[f.checked && 'bg-stone-700']"
         >
           <div class="flex min-h-0 flex-1 items-center justify-center p-3">
             <div
