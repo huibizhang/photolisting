@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Show HEAD~1 SHA
         run: |
+          echo "SHA= $(git reflog HEAD@{0})"
           echo "SHA= $(git rev-list --max-count=1 origin/master)"
       - name: Get Previous Version
         id: get_previous_version
