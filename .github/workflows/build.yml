@@ -19,9 +19,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: Show ref-log
+      - name: Show HEAD~1 SHA
         run: |
-          echo "SHA= $(git rev-parse origin/master~1)"
+          echo "SHA= $(git rev-list --max-count=1 HEAD~1)"
       - name: Get Previous Version
         id: get_previous_version
         run: |
