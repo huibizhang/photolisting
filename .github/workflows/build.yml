@@ -24,14 +24,16 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
       - name: Get Previous Version
         id: get_previous_version
+        env: |
+          PREVIOUS_VERSION: $(git show HEAD~1:package.json | grep -oP '(?<="version": ")[^"]+')
         run: |
-          PREVIOUS_VERSION=$(git show HEAD~1:package.json | grep -oP '(?<="version": ")[^"]+')
           echo "::previousVersion=::$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
           echo "${{ PREVIOUS_VERSION }}"
       - name: Get Current Version
         id: get_current_version
+        env: |
+          CURRENT_VERSION: $(jq -r '.version' package.json)
         run: |
-          CURRENT_VERSION=$(jq -r '.version' package.json)
           echo "::currentVersion=::$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "${{ CURRENT_VERSION }}"
 
