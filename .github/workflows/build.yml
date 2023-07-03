@@ -14,9 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged && github.head_ref == 'dev' }}
     # outputs:
-    #   output1: ${{ steps.package-json.outputs.has-updated }}
-    #   output2: ${{ steps.package-json.outputs.previous-version }}
-    #   output3: ${{ steps.package-json.outputs.version }}
+    #   output1: ${{ steps.package-json.outputs.previous-version }}
+    #   output2: ${{ steps.package-json.outputs.version }}
     steps:
       # - uses: johnnybenson/package-json-versioned-action@v1.0.5
       #   id: package-json
@@ -24,18 +23,14 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
       - name: Get Previous Version
         id: get_previous_version
-        env: |
-          PREVIOUS_VERSION: $(git show HEAD~1:package.json | grep -oP '(?<="version": ")[^"]+')
         run: |
-          echo "::previousVersion=::$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
-          echo "${{ PREVIOUS_VERSION }}"
+          echo "previousVersion=$(git show HEAD~1:package.json | grep -oP '(?<="version": ")[^"]+')" >> $GITHUB_OUTPUT
+          echo "${{ outputs.previousVersion }}"
       - name: Get Current Version
         id: get_current_version
-        env: |
-          CURRENT_VERSION: $(jq -r '.version' package.json)
         run: |
-          echo "::currentVersion=::$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          echo "${{ CURRENT_VERSION }}"
+          echo "currentVersion=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+          echo "${{ outputs.currentVersion }}"
 
   build:
     name: "Build & Publish"
