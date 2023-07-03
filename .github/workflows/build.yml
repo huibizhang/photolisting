@@ -17,10 +17,6 @@ jobs:
       previousVersion: ${{ steps.get_previous_version.outputs.previousVersion }}
       currentVersion: ${{ steps.get_current_version.outputs.currentVersion }}
     steps:
-      # - uses: johnnybenson/package-json-versioned-action@v1.0.5
-      #   id: package-json
-      #   with:
-      #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
       - name: checkout
         uses: actions/checkout@v2
       - name: Get Previous Version
