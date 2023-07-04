@@ -1,7 +1,17 @@
 <template>
-  <div class="flex h-full w-full flex-col items-center justify-center">
-    <div class="text-xl text-gray-200">相片列表是空的</div>
-    <div class="relative flex h-36 w-36 text-gray-200">
+  <div
+    class="flex h-full w-full flex-col items-center justify-center transition-all"
+  >
+    <div
+      class="text-xl text-gray-200"
+      :class="loaded ? 'opacity-100 duration-700' : 'opacity-0'"
+    >
+      相片列表是空的
+    </div>
+    <div
+      class="relative flex h-36 w-36 text-gray-200 transition-all"
+      :class="loaded ? 'opacity-100 duration-700' : 'opacity-0'"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -33,6 +43,7 @@
     </div>
     <label
       class="active:bg-blue-70 cursor-pointer rounded-full bg-blue-500 px-5 py-1 font-mono text-sm font-black text-white transition-all hover:bg-blue-600"
+      :class="loaded ? 'opacity-100 duration-700' : 'opacity-0'"
     >
       <input
         ref="file"
@@ -47,7 +58,18 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      loaded: false,
+    };
+  },
+  mounted() {
+    setTimeout(() => {
+      this.loaded = true;
+    }, 500);
+  },
+};
 </script>
 
 <style></style>
