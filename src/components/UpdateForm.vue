@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute z-20 flex h-screen w-screen items-center justify-center p-5 transition-all"
+    class="absolute left-0 top-0 z-20 flex h-screen w-screen items-center justify-center p-5 transition-all"
     :class="formOpen ? '' : 'pointer-events-none opacity-0'"
   >
     <div class="absolute left-0 top-0 h-full w-full bg-black/50"></div>
@@ -73,7 +73,7 @@ export default {
     targetVersion: { default: "0.0.1" },
     publishedAt: { default: new Date().toString() },
     url: { default: "" },
-    formOpen: { default: true },
+    formOpen: { default: false },
   },
   data() {
     return {
