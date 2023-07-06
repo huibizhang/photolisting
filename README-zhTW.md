@@ -1,9 +1,9 @@
+[EN](./README.md) | 中文
+
 <p align="center">
   <img width="100" src="./icon_256.png" alt="vitawind logo">
   <h1 align="center">Photolisting</h1>
 </p>
-
-[EN](./README.md) | 中文
 
 ---
 
