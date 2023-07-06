@@ -1,10 +1,10 @@
 <template>
   <div
-    class="relative flex h-screen min-h-0 w-full select-none flex-col overflow-hidden bg-stone-900"
+    class="flex h-screen min-h-0 w-full select-none flex-col overflow-hidden bg-stone-900"
   >
     <!-- 視窗標題列 -->
     <div
-      class="absolute flex h-7 w-full items-center px-2 text-xs text-white"
+      class="flex h-[29px] w-full flex-none items-center px-2 text-xs text-white"
       :style="{ '-webkit-app-region': 'drag' }"
     >
       <img src="/icon.ico" class="mr-1.5 h-5 w-5" />
@@ -12,99 +12,100 @@
       Photolisting
     </div>
 
-    <!-- 選擇相片庫 主畫面 -->
-    <Home v-if="!files.length" @selectDir="selectDir" />
+    <div class="relative h-full min-h-0 w-full flex-1 overflow-hidden">
+      <!-- 選擇相片庫 主畫面 -->
+      <Home v-if="!fileListScreen" @selectDir="selectDir" />
 
-    <!-- 相片列表 -->
-    <div
-      class="flex h-screen max-h-screen w-screen flex-col overflow-hidden pt-8"
-      v-if="files.length"
-    >
+      <!-- 相片列表 -->
       <div
-        class="mb-1 flex items-center justify-end bg-stone-800 p-2 px-4 text-xs text-gray-300"
+        class="flex h-full max-h-screen w-screen flex-col overflow-hidden"
+        v-if="fileListScreen"
       >
-        最低可用評分：
-        <input
-          type="number"
-          max="6"
-          min="0"
-          v-model="lowestRating"
-          class="border-b border-blue-600 bg-transparent text-center"
-        />
-      </div>
-
-      <div
-        class="h-full w-full flex-1 space-y-2 overflow-hidden overflow-y-auto"
-      >
-        <PhotoClass
-          v-for="r in 5 - lowestRating + 1"
-          :key="`classfy-${r}`"
-          :title="nameDict[4 - r + 2]"
-          :itemCount="`${
-            getCheckedFilesByRating(4 - r + 2).length > 0
-              ? `${getCheckedFilesByRating(4 - r + 2).length}/`
-              : ''
-          }${getFilesByRating(4 - r + 2).length}`"
-          :files="getFilesByRating(4 - r + 2)"
-          @load="imgOnLoad($event.$event, $event.index)"
-          @checked="fileChecked($event)"
-          @contextmenuClicked="contextMenu($event.$event, $event.index)"
-          @rename="nameDict[4 - r + 2] = $event"
-        />
-
-        <!-- file unused -->
-        <PhotoClass
-          class="pt-5"
-          :key="`classfy-unused`"
-          title="未使用"
-          :itemCount="`${
-            getCheckedFilesUnused().length > 0
-              ? `${getCheckedFilesUnused().length}/`
-              : ''
-          }${getFilesUnused().length}`"
-          :files="getFilesUnused()"
-          spanable="true"
-          :unusedListOpened="unusedListOpened"
-          @unusedListOpenClicked="unusedListOpened = !unusedListOpened"
-          @load="imgOnLoad($event.$event, $event.index)"
-          @checked="fileChecked($event)"
-          @contextmenuClicked="contextMenu($event.$event, $event.index)"
-        />
-      </div>
-
-      <div
-        class="flex w-full flex-none justify-end border-t-2 border-stone-900 bg-stone-700 p-3"
-      >
-        <button
-          class="rounded-full bg-blue-500 px-5 py-1 font-mono text-sm font-black text-white transition-all hover:bg-blue-600 active:bg-blue-700"
-          @click="listingConfirm"
+        <div
+          class="mb-1 flex items-center justify-end bg-stone-800 p-2 px-4 text-xs text-gray-300"
         >
-          確定
-        </button>
-      </div>
-    </div>
-    <div
-      ref="contextMenu"
-      class="absolute rounded bg-gray-200 px-2 py-1 text-sm transition-opacity"
-      :class="[!menuOpened && 'pointer-events-none opacity-0']"
-      :style="menuPosition"
-    >
-      <div
-        class="cursor-pointer rounded px-8 py-1 hover:bg-gray-300"
-        v-for="mc of menuContents"
-        :key="mc.text"
-        @click="changeRating(mc.value)"
-      >
-        {{ mc.text }}
-      </div>
-    </div>
-    <UpdateForm
-      v-bind="updateInfo"
-      :formOpen="updateForm"
-      @cancel="updateForm = false"
-    />
+          最低可用評分：
+          <input
+            type="number"
+            max="6"
+            min="0"
+            v-model="lowestRating"
+            class="border-b border-blue-600 bg-transparent text-center"
+          />
+        </div>
 
-    <div
+        <div
+          class="h-full w-full flex-1 space-y-2 overflow-hidden overflow-y-auto"
+        >
+          <PhotoClass
+            v-for="r in 5 - lowestRating + 1"
+            :key="`classfy-${r}`"
+            :title="nameDict[4 - r + 2]"
+            :itemCount="`${
+              getCheckedFilesByRating(4 - r + 2).length > 0
+                ? `${getCheckedFilesByRating(4 - r + 2).length}/`
+                : ''
+            }${getFilesByRating(4 - r + 2).length}`"
+            :files="getFilesByRating(4 - r + 2)"
+            @load="imgOnLoad($event.$event, $event.index)"
+            @checked="fileChecked($event)"
+            @contextmenuClicked="contextMenu($event.$event, $event.index)"
+            @lightbox="lightbox($event)"
+            @rename="nameDict[4 - r + 2] = $event"
+          />
+
+          <!-- "未使用" 列表 -->
+          <PhotoClass
+            class="pt-5"
+            :key="`classfy-unused`"
+            title="未使用"
+            :itemCount="`${
+              getCheckedFilesUnused().length > 0
+                ? `${getCheckedFilesUnused().length}/`
+                : ''
+            }${getFilesUnused().length}`"
+            :files="getFilesUnused()"
+            spanable="true"
+            :unusedListOpened="unusedListOpened"
+            @unusedListOpenClicked="unusedListOpened = !unusedListOpened"
+            @load="imgOnLoad($event.$event, $event.index)"
+            @checked="fileChecked($event)"
+            @contextmenuClicked="contextMenu($event.$event, $event.index)"
+            @lightbox="lightbox($event)"
+          />
+        </div>
+
+        <div
+          class="flex w-full flex-none justify-end border-t-2 border-stone-900 bg-stone-700 p-3"
+        >
+          <button
+            class="rounded-full bg-blue-500 px-5 py-1 font-mono text-sm font-black text-white transition-all hover:bg-blue-600 active:bg-blue-700"
+            @click="listingConfirm"
+          >
+            確定
+          </button>
+        </div>
+      </div>
+
+      <!-- 右鍵選單 -->
+      <div
+        ref="contextMenu"
+        class="absolute rounded bg-gray-200 px-2 py-1 text-sm transition-opacity"
+        :class="[!menuOpened && 'pointer-events-none opacity-0']"
+        :style="menuPosition"
+      >
+        <div
+          class="cursor-pointer rounded px-8 py-1 hover:bg-gray-300"
+          v-for="mc of menuContents"
+          :key="mc.text"
+          @click="changeRating(mc.value)"
+        >
+          {{ mc.text }}
+        </div>
+      </div>
+
+      <!-- Setting Button -->
+      <!-- <div
       class="absolute bottom-3 left-3 flex justify-center rounded-full border border-stone-500 px-4 py-1 text-white transition-all hover:bg-white/10 active:scale-95 active:bg-white/30 active:text-blue-400"
     >
       <svg
@@ -117,6 +118,20 @@
           d="M18.75 12.75h1.5a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5zM12 6a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 0112 6zM12 18a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 0112 18zM3.75 6.75h1.5a.75.75 0 100-1.5h-1.5a.75.75 0 000 1.5zM5.25 18.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 010 1.5zM3 12a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 013 12zM9 3.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5zM12.75 12a2.25 2.25 0 114.5 0 2.25 2.25 0 01-4.5 0zM9 15.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z"
         />
       </svg>
+    </div> -->
+
+      <Lightbox
+        :files="files"
+        :index="lightboxIndex"
+        :formOpen="lightboxOpened"
+        @cancel="lightboxOpened = false"
+      />
+
+      <UpdateForm
+        v-bind="updateInfo"
+        :formOpen="updateForm"
+        @cancel="updateForm = false"
+      />
     </div>
   </div>
 </template>
@@ -126,6 +141,7 @@ import exifr from "exifr/dist/full.esm";
 import Home from "./components/Home.vue";
 import PhotoClass from "./components/PhotoClass.vue";
 import UpdateForm from "./components/UpdateForm.vue";
+import Lightbox from "./components/Lightbox.vue";
 
 // https://github.com/huibizhang/photolisting/releases/download/v0.0.0/photolisting-Setup-0.0.0.exe
 
@@ -134,6 +150,7 @@ export default {
     return {
       directory: null,
       files: [],
+
       nameDict: {
         5: "A",
         4: "B",
@@ -174,6 +191,8 @@ export default {
       savePath: undefined,
       updateInfo: {},
       updateForm: false,
+      lightboxIndex: -1,
+      lightboxOpened: false,
     };
   },
   mounted() {
@@ -182,31 +201,27 @@ export default {
     const contextMenu = this.$refs.contextMenu;
     this.menuSize.width = contextMenu?.offsetWidth;
     this.menuSize.height = contextMenu?.offsetHeight;
-    this.preloadDirectory();
+    // this.processForm = true;
+    // this.preloadDirectory();
+
+    // window.addEventListener("keydown", this.handelKeypress);
   },
   methods: {
     async selectDir() {
       const checkPath = window.ipcRenderer.sendSync("selectDir", "");
       console.log(checkPath);
       if (checkPath) {
+        this.fileListScreen = true;
+
         this.preloadDirectory();
       }
     },
     imgOnLoad(e, index) {
       this.files[index].width = e.target.naturalWidth;
       this.files[index].height = e.target.naturalHeight;
-
-      // console.log(
-      //   index,
-      //   this.files[index].rating,
-      //   Number.isInteger(this.files[index].rating)
-      // );
-
       if (!Number.isInteger(this.files[index].rating)) {
         this.files[index].rating = this.files[index].exif?.Rating;
       }
-
-      console.log(this.files[index]);
     },
     getFilesByRating(rating) {
       return this.files.filter(
@@ -252,7 +267,7 @@ export default {
         this.fileChecked({ index: i, value: true });
       }
 
-      console.log(this.menuSize.width, e.clientX, window.innerWidth);
+      // console.log(this.menuSize.width, e.clientX, window.innerWidth);
 
       if (e.clientX + this.menuSize.width > window.innerWidth) {
         this.menuPosition.left = `${
@@ -271,25 +286,26 @@ export default {
       }
     },
     async preloadDirectory() {
+      this.files = [];
+
       const [files, dir] = await window.electronAPI.preloadDirectory();
 
       this.savePath = dir;
 
-      for (let i = 0; i < files?.length; i++) {
+      if (!files.length) {
+        this.fileListScreen = false;
+        this.processForm = false;
+      } else {
+        this.fileTotalCount = files.length;
+      }
+
+      const fileLoadPromise = [];
+
+      for (let i = 0; i < files.length; i++) {
         this.files.push(await this.createFile(files[i], i));
-
-        // reader.onload = async function (ev) {
-        //   _this.files[i].url = ev.target.result;
-        //   //
-        // };
-
-        // reader.readAsDataURL(files[i]);
       }
     },
     changeRating(nextRating) {
-      // const index = this.currentPic;
-      // this.files[index].rating = nextRating;
-
       this.getCheckedFiles().forEach(
         (f) => (this.files[f.index].rating = nextRating)
       );
@@ -319,14 +335,14 @@ export default {
           };
         });
 
-      console.log(finalList);
+      // console.log(finalList);
       window.ipcRenderer.send("save", finalList);
     },
     checkUpdate() {
       window.electronAPI.checkUpdate((evt, arg) => {
         this.updateInfo = arg;
         this.updateForm = arg.currentVersion < arg.targetVersion;
-        console.log(this.updateForm);
+        // console.log(this.updateForm);
       });
     },
     fileChecked(event) {
@@ -354,6 +370,13 @@ export default {
         });
       }
     },
+    lightbox(index) {
+      this.lightboxOpened = true;
+      this.lightboxIndex = index;
+    },
+    handelKeypress(event) {
+      console.log(event);
+    },
   },
   watch: {
     menuOpened(value) {
@@ -370,6 +393,6 @@ export default {
       }
     },
   },
-  components: { Home, PhotoClass, UpdateForm },
+  components: { Home, PhotoClass, UpdateForm, Lightbox },
 };
 </script>
