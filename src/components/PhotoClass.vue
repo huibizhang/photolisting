@@ -54,6 +54,7 @@
         class="flex aspect-[3/4] w-full border border-stone-900 bg-stone-800 transition-all"
         v-for="f in files"
         :key="f.url"
+        @dblclick="$emit('lightbox', f.index)"
         @contextmenu.prevent="
           $emit('contextmenuClicked', { $event, index: f.index })
         "
