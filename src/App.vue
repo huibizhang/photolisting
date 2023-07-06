@@ -127,6 +127,8 @@
         @cancel="lightboxOpened = false"
       />
 
+      <Processing v-if="processForm" />
+
       <UpdateForm
         v-bind="updateInfo"
         :formOpen="updateForm"
@@ -142,6 +144,7 @@ import Home from "./components/Home.vue";
 import PhotoClass from "./components/PhotoClass.vue";
 import UpdateForm from "./components/UpdateForm.vue";
 import Lightbox from "./components/Lightbox.vue";
+import Processing from "./components/Processing.vue";
 
 // https://github.com/huibizhang/photolisting/releases/download/v0.0.0/photolisting-Setup-0.0.0.exe
 
@@ -150,7 +153,7 @@ export default {
     return {
       directory: null,
       files: [],
-
+      fileListScreen: false,
       nameDict: {
         5: "A",
         4: "B",
@@ -193,6 +196,7 @@ export default {
       updateForm: false,
       lightboxIndex: -1,
       lightboxOpened: false,
+      processForm: false,
     };
   },
   mounted() {
@@ -212,7 +216,7 @@ export default {
       console.log(checkPath);
       if (checkPath) {
         this.fileListScreen = true;
-
+        this.processForm = true;
         this.preloadDirectory();
       }
     },
@@ -304,6 +308,8 @@ export default {
       for (let i = 0; i < files.length; i++) {
         this.files.push(await this.createFile(files[i], i));
       }
+
+      this.processForm = false;
     },
     changeRating(nextRating) {
       this.getCheckedFiles().forEach(
@@ -393,6 +399,6 @@ export default {
       }
     },
   },
-  components: { Home, PhotoClass, UpdateForm, Lightbox },
+  components: { Home, PhotoClass, UpdateForm, Lightbox, Processing },
 };
 </script>
