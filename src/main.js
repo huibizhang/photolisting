@@ -1,5 +1,14 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import './index.css'
+import { createApp } from "vue";
+import App from "./App.vue";
+import "./index.css";
 
-createApp(App).mount('#app')
+const app = createApp(App);
+
+app.directive("focus", {
+  updated(el, binding, vnode, prevVnode) {
+    // console.log(el, binding);
+    if (binding.value) el.focus();
+  },
+});
+
+app.mount("#app");
