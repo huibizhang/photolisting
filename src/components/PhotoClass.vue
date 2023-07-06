@@ -1,18 +1,22 @@
 <template>
   <div>
     <div class="flex items-center justify-between bg-stone-800 p-2 px-4">
-      <div class="flex items-center space-x-3 text-xl text-gray-300">
-        <div
-          class="flex-1 text-xl text-gray-300"
-          @dblclick="renameEditor = true && !spanable"
-        >
-          <span v-if="!renameEditor">{{ title }}</span>
+      <div
+        class="flex w-1/2 items-center space-x-3 text-xl text-gray-300"
+        @dblclick="renameEditor = true && !spanable"
+      >
+        <div class="flex-none text-xl text-gray-300" ref="photoClassName">
+          <div v-show="!renameEditor">{{ title }}</div>
           <input
-            v-if="renameEditor"
+            v-show="renameEditor"
             type="text"
             v-model="name"
             class="border-b border-blue-500 bg-transparent outline-none"
-            @keypress.enter="renameEditor = false"
+            :class="[]"
+            v-focus="renameEditor"
+            @blur="compeleted(true)"
+            @keypress.enter="compeleted(true)"
+            @keydown.esc="compeleted(false)"
           />
         </div>
         <div
@@ -37,7 +41,7 @@
           </svg>
         </div>
       </div>
-      <div class="text-xs text-gray-500">
+      <div class="w-1/2 text-right text-xs text-gray-500">
         {{ itemCount }}
         個項目
       </div>
@@ -138,9 +142,11 @@ export default {
       renameEditor: false,
     };
   },
-  watch: {
-    name(newVal) {
-      this.$emit("rename", newVal);
+  methods: {
+    compeleted(bool) {
+      this.renameEditor = false;
+      if (bool && this.name !== "") this.$emit("rename", this.name);
+      else this.name = this.title;
     },
   },
 };
