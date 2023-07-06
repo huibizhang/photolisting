@@ -3,6 +3,12 @@
   <h1 align="center">Photolisting</h1>
 </p>
 
+EN | [中文](./README-zhTW.md)
+
+---
+
+![](./preview/home.png)
+
 <p align="center">
 Develop with <code>Electron</code> + <code>Vite</code> + <code>TailwindCSS</code>
 </p>
