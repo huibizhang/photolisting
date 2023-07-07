@@ -206,7 +206,7 @@ export default {
     this.menuSize.width = contextMenu?.offsetWidth;
     this.menuSize.height = contextMenu?.offsetHeight;
     // this.processForm = true;
-    // this.preloadDirectory();
+    this.preloadDirectory();
 
     // window.addEventListener("keydown", this.handelKeypress);
   },
@@ -216,15 +216,21 @@ export default {
       console.log(checkPath);
       if (checkPath) {
         this.fileListScreen = true;
-        this.processForm = true;
+        // this.processForm = true;
         this.preloadDirectory();
       }
     },
     imgOnLoad(e, index) {
-      this.files[index].width = e.target.naturalWidth;
-      this.files[index].height = e.target.naturalHeight;
-      if (!Number.isInteger(this.files[index].rating)) {
-        this.files[index].rating = this.files[index].exif?.Rating;
+      const f = this.files[index];
+
+      f.width = e.target.naturalWidth;
+      f.height = e.target.naturalHeight;
+
+      console.log(f.rating);
+
+      if (!Number.isInteger(f.rating)) {
+        console.log(f.exif?.Rating);
+        f.rating = f.exif?.Rating ?? 5;
       }
     },
     getFilesByRating(rating) {
@@ -290,25 +296,26 @@ export default {
       }
     },
     async preloadDirectory() {
+      this.processForm = true;
       this.files = [];
 
       const [files, dir] = await window.electronAPI.preloadDirectory();
 
       this.savePath = dir;
 
-      if (!files.length) {
+      if (!files?.length) {
         this.fileListScreen = false;
         this.processForm = false;
+        return;
       } else {
         this.fileTotalCount = files.length;
       }
-
-      const fileLoadPromise = [];
 
       for (let i = 0; i < files.length; i++) {
         this.files.push(await this.createFile(files[i], i));
       }
 
+      this.fileListScreen = true;
       this.processForm = false;
     },
     changeRating(nextRating) {
@@ -319,17 +326,25 @@ export default {
     async createFile(file, index) {
       // console.log(file);
 
-      return {
+      // console.log(file.name, await exifr.thumbnailUrl(file));
+
+      const item = {
         index: index,
         name: file.name,
-        url: await exifr.thumbnailUrl(file),
+        url:
+          (await exifr.thumbnailUrl(file)) ??
+          (await this.fileToBase64WithResize(file)),
         exif: await exifr.parse(file, true),
         width: 1,
         height: 1,
         checked: false,
-        rating: undefined,
+        rating: (await exifr.parse(file, true)?.rating) ?? 5,
         raw: file,
       };
+
+      console.log(item);
+
+      return item;
     },
     listingConfirm() {
       const finalList = this.files
@@ -346,6 +361,8 @@ export default {
     },
     checkUpdate() {
       window.electronAPI.checkUpdate((evt, arg) => {
+        if (!arg) return;
+
         this.updateInfo = arg;
         this.updateForm = arg.currentVersion < arg.targetVersion;
         // console.log(this.updateForm);
@@ -382,6 +399,55 @@ export default {
     },
     handelKeypress(event) {
       console.log(event);
+    },
+    fileToBase64WithResize(file, maxSize = 640) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxSize || height > maxSize) {
+              const aspectRatio = width / height;
+              if (height >= width) {
+                width = maxSize;
+                height = width / aspectRatio;
+              }
+              if (width > height) {
+                height = maxSize;
+                width = height * aspectRatio;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            ctx.canvas.toBlob((blob) => {
+              const url = URL.createObjectURL(blob);
+              resolve(url);
+            }, file.type);
+          };
+
+          img.onerror = (error) => {
+            reject(undefined);
+          };
+
+          img.src = reader.result;
+        };
+
+        reader.onerror = (error) => {
+          reject(undefined);
+        };
+
+        reader.readAsDataURL(file);
+      });
     },
   },
   watch: {

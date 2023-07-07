@@ -14,7 +14,7 @@ const { LocalFileData } = require("get-file-object-from-local-path");
 const exec = require("child_process").exec;
 const { default: axios } = require("axios");
 
-let readinPath = "";
+let readinPath = undefined;
 
 function createWindow() {
   // 創建瀏覽器窗口
@@ -81,7 +81,10 @@ function createWindow() {
 
       // console.log(appPath);
 
-      const d = readinPath ? readinPath : appPath;
+      console.log(`readinPath = ${readinPath}`);
+      console.log(`appPath = ${appPath}`);
+
+      const d = readinPath ?? appPath;
       const fileList = fs.readdirSync(d);
       const files = [];
 
@@ -183,8 +186,10 @@ function createWindow() {
 }
 
 app.on("ready", function () {
+  // console.log(" ==================== ready ====================");
   if (process.argv.length > 1) {
     const temp = process.argv[1];
+    // const temp = "C:\\Users\\narut\\Desktop\\test2";
 
     if (fs.existsSync(temp) && fs.lstatSync(temp).isDirectory()) {
       readinPath = temp;
@@ -197,6 +202,14 @@ app.on("ready", function () {
 // 部分 API 在 ready 事件觸發後才能使用。
 
 app.whenReady().then(() => {
+  // if (process.argv.length > 1) {
+  //   const temp = process.argv[1];
+
+  //   if (fs.existsSync(temp) && fs.lstatSync(temp).isDirectory()) {
+  //     readinPath = temp;
+  //   }
+  // }
+
   createWindow();
 
   app.on("activate", function () {
