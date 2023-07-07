@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute left-0 top-0 z-20 flex h-full w-screen items-center justify-center overflow-hidden p-5 transition-all"
+    class="absolute left-0 top-0 z-20 flex h-full min-h-0 w-screen items-center justify-center overflow-hidden p-5 transition-all"
     :class="formOpen ? '' : 'pointer-events-none opacity-0'"
     tabindex="0"
     v-focus="formOpen"
@@ -19,7 +19,7 @@
       ref="img"
       :src="src"
       class="z-10 flex-col overflow-hidden shadow-md transition-all"
-      :class="formOpen ? '' : 'scale-0'"
+      :class="[formOpen ? '' : 'scale-0', widthFirst ? 'w-full' : 'h-full']"
       :style="{
         transform: `scale(${scale}, ${scale}) translate(${movement.x}px, ${movement.y}px)`,
       }"
@@ -54,6 +54,7 @@ export default {
         x: 0,
         y: 0,
       },
+      widthFirst: true,
     };
   },
   mounted() {
@@ -64,14 +65,18 @@ export default {
       let src = "";
 
       if (this.index >= 0 && this.index < this.files.length) {
-        src = this.files[this.index].url;
+        const f = this.files[this.index];
+        src = f.url;
+
+        console.log(f.height, f.width);
+        this.widthFirst = f.width >= f.height;
 
         var fr = new FileReader();
         fr.onload = () => {
           // console.log(fr);
           this.src = fr.result;
         };
-        fr.readAsDataURL(this.files[this.index].raw);
+        fr.readAsDataURL(f.raw);
       }
 
       this.src = src;
