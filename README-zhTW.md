@@ -5,8 +5,6 @@
   <h1 align="center">Photolisting</h1>
 </p>
 
----
-
 ![](./preview/zhTW/home.png)
 
 <p align="center">
