@@ -25,6 +25,7 @@ function createWindow() {
     // frame: false,
     skipTaskbar: false,
     transparent: false,
+    backgroundColor: "#1C1917",
 
     resizable: true,
     maximizable: true,

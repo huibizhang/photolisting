@@ -1,6 +1,6 @@
 {
   "name": "photolisting",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "main.js",
   "scripts": {
     "vite-dev": "cross-env NODE_ENV=dev vite",
