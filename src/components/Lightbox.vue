@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute left-0 top-0 z-20 flex h-full min-h-0 w-screen items-center justify-center overflow-hidden p-5 transition-all"
+    class="absolute left-0 top-0 z-20 flex h-full min-h-0 w-screen items-center justify-center overflow-hidden p-5 transition-opacity"
     :class="formOpen ? '' : 'pointer-events-none opacity-0'"
     tabindex="0"
     v-focus="formOpen"
@@ -58,6 +58,13 @@ export default {
     };
   },
   mounted() {
+    window.addEventListener("resize", () => {
+      if (this.index >= 0 && this.index < this.files.length) {
+        const f = this.files[this.index];
+        this.aspectRatioDetection(f);
+      }
+    });
+
     this.loadImage();
   },
   methods: {
@@ -68,8 +75,7 @@ export default {
         const f = this.files[this.index];
         src = f.url;
 
-        console.log(f.height, f.width);
-        this.widthFirst = f.width >= f.height;
+        this.aspectRatioDetection(f);
 
         var fr = new FileReader();
         fr.onload = () => {
@@ -171,6 +177,20 @@ export default {
       }
 
       // console.log(type, button, movementX, movementY);
+    },
+    aspectRatioDetection(f) {
+      this.widthFirst = f.width >= f.height;
+
+      const screen = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+      const overSize = this.widthFirst
+        ? screen.width / screen.height > f.width / f.height
+        : screen.width / screen.height < f.width / f.height;
+
+      if (this.widthFirst) this.widthFirst = this.widthFirst && !overSize;
+      else this.widthFirst = this.widthFirst || overSize;
     },
   },
   watch: {
