@@ -15,7 +15,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     }
     return [
       data.map((f) => {
-        console.log(f);
+        // console.log(f);
         return constructFileFromLocalFileData(f);
       }),
       // data,

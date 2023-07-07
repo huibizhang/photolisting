@@ -1,9 +1,9 @@
 {
   "name": "photolisting",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "main.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev vite",
+    "vite-dev": "cross-env NODE_ENV=dev vite",
     "build": "cross-env NODE_ENV=production vite build",
     "github:build": "cross-env NODE_ENV=github vite build --mode github",
     "serve": "vite preview",
@@ -11,7 +11,8 @@
     "pack": "electron-builder --dir",
     "pack-dist": "electron-builder",
     "full-build": "npm-run-all -s build pack-dist",
-    "github-full-build": "npm-run-all -s github:build pack-dist"
+    "github-full-build": "npm-run-all -s github:build pack-dist",
+    "dev": "npm-run-all -p vite-dev electron:serve"
   },
   "dependencies": {
     "axios": "^1.4.0",

@@ -139,7 +139,7 @@ export default {
           if (scaledWidth > screen.width) {
             const maxMove = (scaledWidth - screen.width) / 2 + 16;
 
-            this.movement.x += movementX;
+            this.movement.x += movementX / 2;
 
             if (movementX > 0 && this.movement.x > maxMove) {
               this.movement.x = maxMove;
@@ -154,7 +154,7 @@ export default {
           if (scaledHeight > screen.height) {
             const maxMove = (scaledHeight - screen.height) / 2 + 16;
 
-            this.movement.y += movementY;
+            this.movement.y += movementY / 2;
 
             if (movementY > 0 && this.movement.y > maxMove) {
               this.movement.y = maxMove;
