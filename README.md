@@ -5,8 +5,6 @@ EN | [中文](./README-zhTW.md)
   <h1 align="center">Photolisting</h1>
 </p>
 
----
-
 ![](./preview/home.png)
 
 <p align="center">
